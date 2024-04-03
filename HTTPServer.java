@@ -44,6 +44,12 @@ public class HTTPServer {
                 clientSocket.getOutputStream().write(("Content-Length: " + pathLength + "\r\n").getBytes());
                 clientSocket.getOutputStream().write((headerPath + "\r\n").getBytes());
 
+            }else if(request[1].startsWith("/user-agent")){
+                String userAgent = headers.get(2).replace("User-Agent: ", "");
+                int agentLength = userAgent.length();
+
+                
+
             }else{
                System.out.println("404 ERROR NOT FOUND");
                clientSocket.getOutputStream().write(ERROR.getBytes());

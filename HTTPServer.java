@@ -34,6 +34,16 @@ public class HTTPServer {
                 clientSocket.getOutputStream().write(OK.getBytes());
                 clientSocket.getOutputStream().write("200 OK\r\n".getBytes());
 
+            }else if(request[1].startsWith("/echo")){
+                String headerPath = request[1].replace("/echo/", "");
+                int pathLength = headerPath.length();
+
+                clientSocket.getOutputStream().write(OK.getBytes());
+                clientSocket.getOutputStream().write("HTTP/1.1 200 OK \r\n".getBytes());
+                clientSocket.getOutputStream().write("Content-Type: text/plain\r\n".getBytes());
+                clientSocket.getOutputStream().write(("Content-Length: " + pathLength + "\r\n").getBytes());
+                clientSocket.getOutputStream().write((headerPath + "\r\n").getBytes());
+
             }else{
                System.out.println("404 ERROR NOT FOUND");
                clientSocket.getOutputStream().write(ERROR.getBytes());

@@ -28,7 +28,9 @@ public class HTTPServer {
 
         List<String> headers = getHeaders(clientSocket.getInputStream());
         String[] request = headers.get(0).split(" ");
-        if(request[0].equals("GET")){
+        if(request.length == 0){
+
+        } else if(request[0].equals("GET")){
             if(request[1].equals("/")){
                 System.out.println("200 OK NO ERROR");
                 clientSocket.getOutputStream().write(OK.getBytes());
@@ -48,7 +50,12 @@ public class HTTPServer {
                 String userAgent = headers.get(2).replace("User-Agent: ", "");
                 int agentLength = userAgent.length();
 
-                
+                clientSocket.getOutputStream().write(OK.getBytes());
+                clientSocket.getOutputStream().write("HTTP/1.1 200 OK\r\n".getBytes());
+                clientSocket.getOutputStream().write("Content-Type: text/plain\r\n".getBytes());
+                clientSocket.getOutputStream().write(("Content-Length: " + agentLength + "\r\n").getBytes());
+                clientSocket.getOutputStream().write((userAgent + "\r\n").getBytes());
+
 
             }else{
                System.out.println("404 ERROR NOT FOUND");

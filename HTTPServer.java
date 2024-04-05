@@ -16,9 +16,6 @@ public class HTTPServer {
     }
 
     public void Server() throws IOException {
-        String EOL = "\r\n\r\n";
-        String OK = "HTTP/1.1 200 Ok" + EOL;
-        String ERROR = "HTTP/1.1 404 Error Not Found" + EOL;
 
 
         ServerSocket serverSocket = new ServerSocket(8080);
@@ -26,47 +23,60 @@ public class HTTPServer {
         Socket clientSocket = serverSocket.accept();
         System.out.println("Server Connected!");
 
+        handleClient(clientSocket);
+
+
+
+    }
+
+    public void handleClient(Socket socket) throws IOException{
+        Socket clientSocket = socket;
+
+        String EOL = "\r\n\r\n";
+        String OK = "HTTP/1.1 200 Ok" + EOL;
+        String ERROR = "HTTP/1.1 404 Error Not Found" + EOL;
+
         List<String> headers = getHeaders(clientSocket.getInputStream());
-        String[] request = headers.get(0).split(" ");
-        if(request.length == 0){
+        if(headers.size() == 0){
 
-        } else if(request[0].equals("GET")){
-            if(request[1].equals("/")){
-                System.out.println("200 OK NO ERROR");
-                clientSocket.getOutputStream().write(OK.getBytes());
-                clientSocket.getOutputStream().write("200 OK\r\n".getBytes());
+        }else{
 
-            }else if(request[1].startsWith("/echo")){
-                String headerPath = request[1].replace("/echo/", "");
-                int pathLength = headerPath.length();
+            String[] request = headers.get(0).split(" ");
+            if(request[0].equals("GET")){
+                if(request[1].equals("/")){
+                    System.out.println("200 OK NO ERROR");
+                    clientSocket.getOutputStream().write(OK.getBytes());
+                    clientSocket.getOutputStream().write("200 OK\r\n".getBytes());
 
-                clientSocket.getOutputStream().write(OK.getBytes());
-                clientSocket.getOutputStream().write("HTTP/1.1 200 OK \r\n".getBytes());
-                clientSocket.getOutputStream().write("Content-Type: text/plain\r\n".getBytes());
-                clientSocket.getOutputStream().write(("Content-Length: " + pathLength + "\r\n").getBytes());
-                clientSocket.getOutputStream().write((headerPath + "\r\n").getBytes());
+                }else if(request[1].startsWith("/echo")){
+                    String headerPath = request[1].replace("/echo/", "");
+                    int pathLength = headerPath.length();
 
-            }else if(request[1].startsWith("/user-agent")){
-                String userAgent = headers.get(2).replace("User-Agent: ", "");
-                int agentLength = userAgent.length();
+                    clientSocket.getOutputStream().write(OK.getBytes());
+                    clientSocket.getOutputStream().write("HTTP/1.1 200 OK \r\n".getBytes());
+                    clientSocket.getOutputStream().write("Content-Type: text/plain\r\n".getBytes());
+                    clientSocket.getOutputStream().write(("Content-Length: " + pathLength + "\r\n").getBytes());
+                    clientSocket.getOutputStream().write((headerPath + "\r\n").getBytes());
 
-                clientSocket.getOutputStream().write(OK.getBytes());
-                clientSocket.getOutputStream().write("HTTP/1.1 200 OK\r\n".getBytes());
-                clientSocket.getOutputStream().write("Content-Type: text/plain\r\n".getBytes());
-                clientSocket.getOutputStream().write(("Content-Length: " + agentLength + "\r\n").getBytes());
-                clientSocket.getOutputStream().write((userAgent + "\r\n").getBytes());
+                }else if(request[1].startsWith("/user-agent")){
+                    String userAgent = headers.get(2).replace("User-Agent: ", "");
+                    int agentLength = userAgent.length();
+
+                    clientSocket.getOutputStream().write(OK.getBytes());
+                    clientSocket.getOutputStream().write("HTTP/1.1 200 OK\r\n".getBytes());
+                    clientSocket.getOutputStream().write("Content-Type: text/plain\r\n".getBytes());
+                    clientSocket.getOutputStream().write(("Content-Length: " + agentLength + "\r\n").getBytes());
+                    clientSocket.getOutputStream().write((userAgent + "\r\n").getBytes());
 
 
-            }else{
-               System.out.println("404 ERROR NOT FOUND");
-               clientSocket.getOutputStream().write(ERROR.getBytes());
-               clientSocket.getOutputStream().write("404 ERROR NOT FOUND \r\n".getBytes());
+                }else{
+                    System.out.println("404 ERROR NOT FOUND");
+                    clientSocket.getOutputStream().write(ERROR.getBytes());
+                    clientSocket.getOutputStream().write("404 ERROR NOT FOUND \r\n".getBytes());
+                }
+                clientSocket.close();
             }
-            clientSocket.close();
         }
-
-
-
     }
 
     public List<String> getHeaders(InputStream inputStream) throws IOException {

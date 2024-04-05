@@ -17,13 +17,25 @@ public class HTTPServer {
 
     public void Server() throws IOException {
 
-
         ServerSocket serverSocket = new ServerSocket(8080);
-        serverSocket.setReuseAddress(true);
-        Socket clientSocket = serverSocket.accept();
-        System.out.println("Server Connected!");
 
-        handleClient(clientSocket);
+        try{
+
+            serverSocket.setReuseAddress(true);
+            System.out.println("Server Connected!");
+
+            while(true){
+                Socket clientSocket = serverSocket.accept();
+                handleClient(clientSocket);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            if(serverSocket != null){
+                serverSocket.close();
+            }
+
+        }
 
 
 

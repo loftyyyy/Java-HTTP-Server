@@ -36,9 +36,6 @@ public class HTTPServer {
             }
 
         }
-
-
-
     }
 
     public void handleClient(Socket socket) throws IOException{

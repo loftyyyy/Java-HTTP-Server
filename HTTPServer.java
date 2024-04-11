@@ -98,9 +98,7 @@ public class HTTPServer {
             if(!"".equals(line)){
                 userHeader.add(line);
             }
-
         }
         return userHeader;
-
     }
 }
